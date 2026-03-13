@@ -36,4 +36,37 @@
  */
 export function upiRetry(outcomes) {
   // Your code here
+  // 1. Validation: Array check
+  if (!Array.isArray(outcomes) || outcomes.length === 0) {
+    return { attempts: 0, success: false, totalWaitTime: 0 };
+  }
+
+  let attempts = 0;
+  let totalWaitTime = 0;
+  let currentWait = 1; // Starting with 1s
+  let isSuccess = false;
+
+  // 2. Do...While Loop: Pehle try karo, phir condition check karo
+  do {
+    const result = outcomes[attempts];
+    attempts++; // Attempt count badhao
+
+    if (result === "success") {
+      isSuccess = true;
+      break; // Paisa mil gaya! Loop khatam.
+    } else {
+      // Agar fail hua aur retries bache hain (max 5)
+      // Humein wait time tabhi add karna hai agar agla attempt hone wala ho
+      if (attempts < 5 && attempts < outcomes.length) {
+        totalWaitTime += currentWait;
+        currentWait *= 2; // Exponential Backoff: 1, 2, 4, 8...
+      }
+    }
+  } while (attempts < 5 && attempts < outcomes.length);
+
+  return {
+    attempts: attempts,
+    success: isSuccess,
+    totalWaitTime: totalWaitTime
+  };
 }

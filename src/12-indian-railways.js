@@ -46,4 +46,68 @@
  */
 export function railwayReservation(passengers, trains) {
   // Your code here
+  // 1. Validation: Agar arrays empty hain toh khali haath wapas jao
+  if (!Array.isArray(passengers) || !Array.isArray(trains) || 
+      passengers.length === 0 || trains.length === 0) {
+    return [];
+  }
+
+  const results = [];
+
+  // 2. Outer Loop: Process each passenger (FIFO)
+  for (let i = 0; i < passengers.length; i++) {
+    const p = passengers[i];
+    let matchingTrain = null;
+
+    // 3. Inner Loop: Find the train matching the trainNumber
+    for (let j = 0; j < trains.length; j++) {
+      if (trains[j].trainNumber === p.trainNumber) {
+        matchingTrain = trains[j];
+        break; // Mil gayi train!
+      }
+    }
+
+    // Case 1: Train nahi mili
+    if (!matchingTrain) {
+      results.push({
+        name: p.name,
+        trainNumber: p.trainNumber,
+        class: null,
+        status: "train_not_found"
+      });
+      continue; // Agle passenger pe chalo
+    }
+
+    // Case 2: Try Preferred Class
+    if (matchingTrain.seats[p.preferred] > 0) {
+      matchingTrain.seats[p.preferred]--; // Seat pakki (Mutation)
+      results.push({
+        name: p.name,
+        trainNumber: p.trainNumber,
+        class: p.preferred,
+        status: "confirmed"
+      });
+    } 
+    // Case 3: Try Fallback Class
+    else if (matchingTrain.seats[p.fallback] > 0) {
+      matchingTrain.seats[p.fallback]--; // Seat pakki (Mutation)
+      results.push({
+        name: p.name,
+        trainNumber: p.trainNumber,
+        class: p.fallback,
+        status: "confirmed"
+      });
+    } 
+    // Case 4: No seats available -> Waitlist
+    else {
+      results.push({
+        name: p.name,
+        trainNumber: p.trainNumber,
+        class: p.preferred,
+        status: "waitlisted"
+      });
+    }
+  }
+
+  return results;
 }

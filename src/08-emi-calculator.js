@@ -43,4 +43,55 @@
  */
 export function calculateEMI(principal, monthlyRate, emi) {
   // Your code here
+  // 1. Validation: Sab numbers positive hone chahiye
+  if (
+    typeof principal !== 'number' || principal <= 0 ||
+    typeof monthlyRate !== 'number' || monthlyRate < 0 ||
+    typeof emi !== 'number' || emi <= 0
+  ) {
+    return { months: -1, totalPaid: -1, totalInterest: -1 };
+  }
+
+  // 2. Infinite Loop Protection:
+  // Agar EMI pehle mahine ke interest se kam ya barabar hai, toh balance kabhi kam nahi hoga.
+  if (emi <= principal * monthlyRate) {
+    return { months: -1, totalPaid: -1, totalInterest: -1 };
+  }
+
+  let remaining = principal;
+  let months = 0;
+  let totalPaid = 0;
+  let totalInterest = 0;
+
+  // 3. Loop: Jab tak loan poora na ho jaye
+  while (remaining > 0) {
+    months++;
+    
+    // Step A: Calculate monthly interest
+    const interestThisMonth = remaining * monthlyRate;
+    totalInterest += interestThisMonth;
+    
+    // Step B: Add interest to remaining balance
+    remaining += interestThisMonth;
+
+    // Step C: Check if it's the last month
+    if (remaining < emi) {
+      // Jitna bacha hai bas utna hi pay karo (last payment)
+      totalPaid += remaining;
+      remaining = 0;
+    } else {
+      // Normal EMI pay karo
+      totalPaid += emi;
+      remaining -= emi;
+    }
+    
+    // Safety break: Agar calculation mein koi gadbad ho (BCA exams mein kaam aata hai)
+    if (months > 500) break; 
+  }
+
+  return {
+    months: months,
+    totalPaid: Number(totalPaid.toFixed(2)), // Rounding for cleaner results
+    totalInterest: Number(totalInterest.toFixed(2))
+  };
 }

@@ -35,6 +35,44 @@
  *   rangoli(2) // => [" *", "* *", " *"]
  *   rangoli(3) // => ["  *", " * *", "* * *", " * *", "  *"]
  */
+/**
+ * 🎨 Priya ki Diwali Rangoli
+ */
 export function rangoli(n) {
-  // Your code here
+  // 1. Validation: n must be a positive integer
+  if (typeof n !== 'number' || !Number.isInteger(n) || n <= 0) {
+    return [];
+  }
+
+  const result = [];
+  const totalRows = 2 * n - 1;
+
+  // 2. Main Loop for each row
+  for (let i = 1; i <= totalRows; i++) {
+    // Determine number of stars (m) for the current row
+    // Top half (1 to n) -> m = i
+    // Bottom half (n+1 to 2n-1) -> m = (2n - i)
+    let m = i <= n ? i : (2 * n - i);
+
+    let rowString = "";
+
+    // Inner Loop 1: Adding Leading Spaces
+    // Formula: (n - m) spaces are needed for center alignment
+    for (let j = 0; j < n - m; j++) {
+      rowString += " ";
+    }
+
+    // Inner Loop 2: Adding Stars with Spaces
+    for (let k = 1; k <= m; k++) {
+      rowString += "*";
+      // Add a space after star ONLY if it's not the last star in the row
+      if (k < m) {
+        rowString += " ";
+      }
+    }
+
+    result.push(rowString);
+  }
+
+  return result;
 }

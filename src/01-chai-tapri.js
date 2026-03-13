@@ -28,4 +28,22 @@
  */
 export function chaiTapriRevenue(customers) {
   // Your code here
+  // 1. Validation: Check if it's a positive integer
+  // Number.isInteger handles strings, decimals, and NaNs
+  if (!Number.isInteger(customers) || customers <= 0) {
+    return { totalChai: 0, totalRevenue: 0 };
+  }
+
+  // 2. Logic:
+  // Every 3rd customer gets Adrak Chai (Rs 15)
+  // Others get Cutting Chai (Rs 10)
+  const adrakChaiCount = Math.floor(customers / 3);
+  const cuttingChaiCount = customers - adrakChaiCount;
+
+  const totalRevenue = (adrakChaiCount * 15) + (cuttingChaiCount * 10);
+
+  return {
+    totalChai: customers,
+    totalRevenue: totalRevenue
+  };
 }

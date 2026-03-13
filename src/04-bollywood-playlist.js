@@ -35,4 +35,38 @@
  */
 export function buildPlaylist(songs, maxDuration) {
   // Your code here
+  // 1. Validation: Array check aur maxDuration check
+  if (!Array.isArray(songs) || typeof maxDuration !== 'number' || maxDuration <= 0) {
+    return { count: 0, totalDuration: 0 };
+  }
+
+  let count = 0;
+  let totalDuration = 0;
+  let i = 0;
+
+  // 2. Loop through songs using while
+  while (i < songs.length) {
+    const currentSong = songs[i];
+
+    // Step A: Skip invalid durations (Negative, Zero, NaN, or non-numbers)
+    if (typeof currentSong !== 'number' || currentSong <= 0 || isNaN(currentSong)) {
+      i++;
+      continue; // Agle song pe chalo
+    }
+
+    // Step B: Check limit BEFORE adding
+    if (totalDuration + currentSong > maxDuration) {
+      break; // Limit reach ho gayi, bas itne hi gaane aayenge!
+    }
+
+    // Step C: Add song to playlist
+    totalDuration += currentSong;
+    count++;
+    i++;
+  }
+
+  return { 
+    count: count, 
+    totalDuration: totalDuration 
+  };
 }

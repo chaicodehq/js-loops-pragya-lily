@@ -38,4 +38,78 @@
  */
 export function iplPointsTable(matches) {
   // Your code here
+  // 1. Validation: Check if matches is a valid non-empty array
+  if (!Array.isArray(matches) || matches.length === 0) {
+    return [];
+  }
+
+  // 2. Accumulator: Stores team data as keys for quick access
+  const table = {};
+
+  // Helper function: Ensures team exists in the table object
+  const initTeam = (teamName) => {
+    if (!table[teamName]) {
+      table[teamName] = { 
+        team: teamName, 
+        played: 0, 
+        won: 0, 
+        lost: 0, 
+        tied: 0, 
+        noResult: 0, 
+        points: 0 
+      };
+    }
+  };
+
+  // 3. Process each match
+  for (let i = 0; i < matches.length; i++) {
+    const { team1, team2, result, winner } = matches[i];
+
+    // Initialize teams if they aren't already in the table
+    initTeam(team1);
+    initTeam(team2);
+
+    // Update matches played for both
+    table[team1].played++;
+    table[team2].played++;
+
+    if (result === "win") {
+      // Winner logic (2 points)
+      table[winner].won++;
+      table[winner].points += 2;
+
+      // Loser logic
+      const loser = (winner === team1) ? team2 : team1;
+      table[loser].lost++;
+    } 
+    else if (result === "tie") {
+      // Tie logic (1 point each)
+      table[team1].tied++;
+      table[team1].points += 1;
+      table[team2].tied++;
+      table[team2].points += 1;
+    } 
+    else if (result === "no_result") {
+      // Rain/No result logic (1 point each)
+      table[team1].noResult++;
+      table[team1].points += 1;
+      table[team2].noResult++;
+      table[team2].points += 1;
+    }
+  }
+
+  // 4. Convert Object to Array for sorting
+  const resultTable = Object.values(table);
+
+  // 5. Sorting Logic
+  resultTable.sort((a, b) => {
+    // Primary: Points Descending (Zyada points upar)
+    if (b.points !== a.points) {
+      return b.points - a.points;
+    }
+    // Secondary: Team Name Ascending (Alphabetical order A -> Z)
+    return a.team.localeCompare(b.team);
+  });
+
+  return resultTable;
 }

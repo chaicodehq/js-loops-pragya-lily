@@ -32,4 +32,42 @@
  */
 export function cricketScoreboard(balls) {
   // Your code here
+  // Validation: Agar array nahi hai ya khali hai
+  if (!Array.isArray(balls) || balls.length === 0) {
+    return { totalRuns: 0, totalBalls: 0, wickets: 0, fours: 0, sixes: 0 };
+  }
+
+  let totalRuns = 0;
+  let totalBalls = 0;
+  let wickets = 0;
+  let fours = 0;
+  let sixes = 0;
+
+  for (let i = 0; i < balls.length; i++) {
+    const outcome = balls[i];
+    
+    // Har ball count hogi (jab tak 10 wickets na ho jayein)
+    totalBalls++;
+
+    if (outcome === -1) {
+      wickets++;
+      // Stop immediately if all out (10 wickets)
+      if (wickets === 10) {
+        break;
+      }
+    } else {
+      // Runs addition
+      totalRuns += outcome;
+      if (outcome === 4) fours++;
+      if (outcome === 6) sixes++;
+    }
+  }
+
+  return {
+    totalRuns,
+    totalBalls,
+    wickets,
+    fours,
+    sixes
+  };
 }
